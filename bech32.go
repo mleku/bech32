@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
-// charset is the set of characters used in the data section of bech32 strings.
+// Charset is the set of characters used in the data section of bech32 strings.
 // Note that this is ordered, such that for a given charset[i], i is the binary
 // value of the character.
-const charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+//
+// This wasn't exported in the original lol.
+const Charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
 // gen encodes the generator polynomial for the bech32 BCH checksum.
 var gen = []int{0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3}
@@ -22,7 +24,7 @@ var gen = []int{0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3}
 func toBytes(chars string) ([]byte, error) {
 	decoded := make([]byte, 0, len(chars))
 	for i := 0; i < len(chars); i++ {
-		index := strings.IndexByte(charset, chars[i])
+		index := strings.IndexByte(Charset, chars[i])
 		if index < 0 {
 			return nil, ErrNonCharsetChar(chars[i])
 		}
@@ -133,7 +135,7 @@ func writeBech32Checksum(hrp string, data []byte, bldr *strings.Builder,
 
 		// This can't fail, given we explicitly cap the previous b byte by the
 		// first 31 bits.
-		c := charset[b]
+		c := Charset[b]
 		bldr.WriteByte(c)
 	}
 }
@@ -310,10 +312,10 @@ func encodeGeneric(hrp string, data []byte,
 
 	// Write the data part, using the bech32 charset.
 	for _, b := range data {
-		if int(b) >= len(charset) {
+		if int(b) >= len(Charset) {
 			return "", ErrInvalidDataByte(b)
 		}
-		bldr.WriteByte(charset[b])
+		bldr.WriteByte(Charset[b])
 	}
 
 	// Calculate and write the checksum of the data.
